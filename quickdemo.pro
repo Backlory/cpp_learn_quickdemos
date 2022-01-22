@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += \
         main.cpp \
-        tasker.cpp
+        tasker_cpp.cpp \
+        tasker_stl.cpp
 
 HEADERS += \
     tasker.h

@@ -6,8 +6,16 @@
 #include <cstring>
 #include <string>
 #include <typeinfo>
+#include <fstream>
 
-class tasker{
+class tasker_STL{
+public:
+    void task1();
+};
+
+
+
+class tasker_cpp{
 public:
     void task1();
     void task2(int a, float b, char c);
@@ -19,7 +27,10 @@ public:
     void task8();
     void task9();
     void task10();
+    void task11();
 };
+
+
 
 
 #endif // TASKER_H
