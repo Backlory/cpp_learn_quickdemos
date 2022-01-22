@@ -3,6 +3,70 @@
 
 using std::string;
 
+//template<typename T1, typename T2> void task10_swap(T1 &, T2 &);  //useless declaration
+template<typename T> void task10_swap(T *a, T *b){
+    T temp = *a;
+    *a = *b;
+    *b = temp;
+    return;
+}
+template<typename T> void task10_swap(T &a, T &b){
+    T temp = a;
+    a = b;
+    b = temp;
+    return;
+}
+template<typename T1, typename T2> void task10_swap(T1 &a, T2 &b){
+    T1 temp = a;// here is a loss of accuracy
+    a = b;
+    b = temp;
+    return;
+}
+void tasker::task10(){
+    float a=1.1, b=2.9;
+    int i1=9, i2=7;
+    task10_swap(&i1, &i2);
+    std::cout<<i1<<","<<i2<<std::endl;
+    task10_swap(i1, i2);
+    std::cout<<i1<<","<<i2<<std::endl;
+    task10_swap<int, int>(i1, i2);
+    std::cout<<i1<<","<<i2<<std::endl;
+    task10_swap(a, i2);
+    std::cout<<i1<<","<<i2<<std::endl;
+}
+
+void tasker::task9(){
+    class Complex{
+    private:
+        double m_real,m_imag;
+    public:
+        Complex():m_real(0.0),m_imag(0.0){}
+        Complex(float real, float imag):m_real(real),m_imag(imag){}
+        //==
+        double real() const {
+            return this->m_real;
+        }
+        //==
+        double imag() const{
+            return this->m_imag;
+        }
+        //==
+        Complex operator+(const Complex &c2){
+            return Complex(this->m_real+c2.m_real, this->m_imag+c2.m_imag);
+        }
+        //==
+        void show(){
+            std::cout<<this->m_real<<" + "<<this->m_imag <<" i"<<std::endl;
+        }
+    };
+    Complex a(5.9, 16);
+    Complex b(1.6, 66);
+    Complex c=a+b;
+    c.show();
+    std::cout<<c.real()<<std::endl;
+
+}
+
 void tasker::task8(){
     std::cout<<typeid (0).name()<<"|"<<std::endl;
     std::cout<<typeid (1).name()<<"|"<<std::endl;

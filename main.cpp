@@ -15,7 +15,9 @@ int main()
     //Tasker1.task5();
     //Tasker1.task6();
     //Tasker1.task7();
-    Tasker1.task8();
+    //Tasker1.task8();
+    //Tasker1.task9();
+    Tasker1.task10();
 
 
     return 0;
