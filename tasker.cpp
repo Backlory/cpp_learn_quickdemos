@@ -3,10 +3,91 @@
 
 using std::string;
 
-/* ========================
- * test for memory leak
- * ========================*/
+void tasker::task8(){
+    std::cout<<typeid (0).name()<<"|"<<std::endl;
+    std::cout<<typeid (1).name()<<"|"<<std::endl;
+    std::cout<<typeid (1.6).name()<<"|"<<std::endl;
+    std::cout<<typeid (true).name()<<"|"<<std::endl;
+    std::cout<<typeid (false).name()<<"|"<<std::endl;
+    std::cout<<typeid ("asd1q").name()<<"|"<<std::endl;
+    std::cout<<typeid ("adq1d2a156d1da6").name()<<"|"<<std::endl;
+    std::cout<<typeid ('k').name()<<"|"<<std::endl;
+    std::cout<<typeid (tasker).name()<<"|"<<std::endl;
+    std::cout<<typeid (void).name()<<"|"<<std::endl;
+    bool temp = (typeid(3.3)==typeid("123"));
+    std::cout<<temp<<std::endl;
+}
+
+void tasker::task7(){
+    /**/
+    class People{
+    private:
+        const string m_name;
+        const int m_age;
+    public:
+        People(string name, int age):
+            m_name(name),m_age(age){
+            std::cout<<"People comes!"<<std::endl;
+        }
+        ~People(){
+            std::cout<<"people died!"<<std::endl;
+        }
+        //==
+        string getname(){
+            return this->m_name;
+        }
+        //==
+        int getage(){
+            return this->m_age;
+        }
+    };
+    class Student: public People{
+    private:
+        float m_score;
+    public:
+        Student(string name, int age, float score):People(name, age){
+            this->m_score = score;
+            std::cout<<"student comes!"<<std::endl;
+        }
+        ~Student(){
+            std::cout<<"student dead!"<<std::endl;
+        }
+        float getscore(){
+            return this->m_score;
+        }
+        void setscore(float score){
+            this->m_score = score;
+        }
+    };
+    //==
+    Student stu1("xiaoming", 17, 95.8);
+    std::cout<<stu1.getname()<<std::endl;
+    std::cout<<stu1.getage()<<std::endl;
+    std::cout<<stu1.getscore()<<std::endl;
+    stu1.setscore(50.7);
+    std::cout<<stu1.getscore()<<std::endl;
+}
+
+void tasker::task6(){
+    /*
+     * reference will not create a copy of return value in memory, but will
+     * directly change the value of the veriable who called this funcation.
+    */
+    class task6_class{
+    public:
+        static int plus10(int &r){
+            r+=10;return r;
+        }
+    };
+    int num1 = 10;
+    int num2 = task6_class::plus10(num1);
+    std::cout<<num1<<", "<<num2<<std::endl;
+}
+
 void tasker::task5(){
+    /* ========================
+     * test for memory leak
+     * ========================*/
     int *array = new int[10];
     array[9] = 99;
     delete[](array);
