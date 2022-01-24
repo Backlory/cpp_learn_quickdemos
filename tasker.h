@@ -7,6 +7,7 @@
 #include <string>
 #include <typeinfo>
 #include <fstream>
+#include <memory>
 
 class tasker_STL{
 public:

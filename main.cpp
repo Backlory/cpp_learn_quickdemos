@@ -11,10 +11,10 @@ int main()
 
     tasker_STL Tasker2;
     //Tasker2.task1();
-    Tasker2.task2();
-    //Tasker1.task3();
+    //Tasker2.task2();
+    //Tasker2.task3();
     //Tasker2.task4();
-    //Tasker2.task5();
+    Tasker2.task5();
     //Tasker2.task6();
     //Tasker2.task7();
     //Tasker2.task8();
