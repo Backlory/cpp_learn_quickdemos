@@ -3,10 +3,36 @@
 #include<vector>
 #include<array>
 #include<map>
+#include<stack>
+#include<list>
+#include<algorithm>
+#include<numeric>
 
 using std::cin;
 using std::cout;
 using std::endl;
+
+void tasker_STL::task6(){
+    std::list<double> list_1 {1.1, 2.2, 3.4, 6, 9.98, 156};
+    std::stack<double, std::list<double>> my_stack(list_1);
+    while (!my_stack.empty()) {
+        cout<<my_stack.top()<<endl;
+        my_stack.pop();
+    }
+    cout<<"===================="<<endl;
+    std::stack<int> my_stack2;
+    cout<<"size = " << my_stack2.size()<<endl;
+    my_stack2.push(6);
+    my_stack2.push(4);
+    my_stack2.push(21);
+    my_stack2.push(111);
+    cout<<"size = " << my_stack2.size()<<endl;
+    while (!my_stack2.empty()) {
+        cout<<my_stack2.top()<<endl;
+        my_stack2.pop();
+    }
+
+}
 
 void tasker_STL::task5(){
     std::map<std::string, std::string> mymap;
