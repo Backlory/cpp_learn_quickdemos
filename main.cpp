@@ -22,10 +22,9 @@ int main()
     }
     std::thread thread_src(tasker3_show_src, src);
     thread_src.join();
-
     tasker_OpenCV Tasker3;
-    Tasker3.colorSpace_Demo(src);
-    //Tasker3.mat_creation_demo();
+    //Tasker3.colorSpace_Demo(src);
+    Tasker3.mat_creation_demo();
     //Tasker3.pixel_visit_demo(src);
     //Tasker3.operators_demo(src);
     //Tasker3.tracking_bar_demo(src);

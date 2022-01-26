@@ -20,7 +20,7 @@ void tasker_OpenCV::mat_creation_demo() {
     // image.copyTo(m2);
 
     // 创建空白图像
-    Mat m3 = Mat::zeros(cv::Size(8, 8), CV_8UC3);
+    Mat m3 = Mat::zeros(cv::Size(1280, 720), CV_8UC3);
     m3 = cv::Scalar(0, 0, 255);
     std::cout << "width: " << m3.cols << " height: " << m3.rows << " channels: "<<m3.channels()<< std::endl;
     // std::cout << m3 << std::endl;
@@ -30,6 +30,7 @@ void tasker_OpenCV::mat_creation_demo() {
     m4 = cv::Scalar(0, 255, 255);
     imshow("图像", m3);
     imshow("图像4", m4);
+    cv::waitKey();
 }
 
 void tasker_OpenCV::pixel_visit_demo(Mat &image) {
