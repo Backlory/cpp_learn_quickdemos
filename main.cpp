@@ -42,13 +42,13 @@ int main()
     //Tasker3.resize_demo(src);
     //Tasker3.flip_demo(src);
     //Tasker3.rotate_demo(src);
-    Tasker3.video_demo();
+    //Tasker3.video_demo();
     //Tasker3.histogram_demo(src);
     //Tasker3.histogram_2d_demo(src);
     //Tasker3.histogram_eq_demo(src);
     //Tasker3.blur_demo(src);
     //Tasker3.gaussian_blur_demo(src);
-    //Tasker3.bifilter_demo(src);
+    Tasker3.bifilter_demo(src);
     //Tasker3.face_detection_demo();
 
 

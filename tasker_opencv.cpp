@@ -511,7 +511,6 @@ void tasker_OpenCV::histogram_demo(Mat &image) {
     std::vector<Mat> bgr_plane;
     split(image, bgr_plane);
     // 定义参数变量
-    const int channels[1] = { 0 };
     const int bins[1] = { 256 };
     float hranges[2] = { 0,255 };
     const float* ranges[1] = { hranges };
@@ -519,14 +518,15 @@ void tasker_OpenCV::histogram_demo(Mat &image) {
     Mat g_hist;
     Mat r_hist;
     // 计算Blue, Green, Red通道的直方图
-    calcHist(&bgr_plane[0], 1, 0, Mat(), b_hist, 1, bins, ranges);
-    calcHist(&bgr_plane[1], 1, 0, Mat(), g_hist, 1, bins, ranges);
-    calcHist(&bgr_plane[2], 1, 0, Mat(), r_hist, 1, bins, ranges);
-
+    cv::calcHist(&bgr_plane[0], 1, 0, Mat(), b_hist, 1, bins, ranges);
+    cv::calcHist(&bgr_plane[1], 1, 0, Mat(), g_hist, 1, bins, ranges);
+    cv::calcHist(&bgr_plane[2], 1, 0, Mat(), r_hist, 1, bins, ranges);
+    std::cout<<b_hist.size()<<std::endl;
+    std::cout<<b_hist(cv::Rect(0,0,1,10))<<std::endl;
     // 显示直方图
     int hist_w = 512;
     int hist_h = 400;
-    int bin_w = cvRound((double)hist_w / bins[0]);
+    int bin_w = cvRound(static_cast<double>(hist_w) / bins[0]);
     Mat histImage = Mat::zeros(hist_h, hist_w, CV_8UC3);
     // 归一化直方图数据
     normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, Mat());
@@ -534,16 +534,23 @@ void tasker_OpenCV::histogram_demo(Mat &image) {
     normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, Mat());
     // 绘制直方图曲线
     for (int i = 1; i < bins[0]; i++) {
-        line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
-            cv::Point(bin_w*(i), hist_h - cvRound(b_hist.at<float>(i))), cv::Scalar(255, 0, 0), 2, 8, 0);
-        line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
-            cv::Point(bin_w*(i), hist_h - cvRound(g_hist.at<float>(i))), cv::Scalar(0, 255, 0), 2, 8, 0);
-        line(histImage, cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
-            cv::Point(bin_w*(i), hist_h - cvRound(r_hist.at<float>(i))), cv::Scalar(0, 0, 255), 2, 8, 0);
+        line(histImage,
+             cv::Point(bin_w*(i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+             cv::Point(bin_w*(i),     hist_h - cvRound(b_hist.at<float>(i))),
+             cv::Scalar(255, 0, 0), 2, 8, 0);
+        line(histImage,
+             cv::Point(bin_w*(i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+             cv::Point(bin_w*(i),     hist_h - cvRound(g_hist.at<float>(i))),
+             cv::Scalar(0, 255, 0), 2, 8, 0);
+        line(histImage,
+             cv::Point(bin_w*(i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+             cv::Point(bin_w*(i),     hist_h - cvRound(r_hist.at<float>(i))),
+             cv::Scalar(0, 0, 255), 2, 8, 0);
     }
     // 显示直方图
     namedWindow("Histogram Demo", cv::WINDOW_AUTOSIZE);
     imshow("Histogram Demo", histImage);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::histogram_2d_demo(Mat &image) {
@@ -557,6 +564,8 @@ void tasker_OpenCV::histogram_2d_demo(Mat &image) {
     const float* hs_ranges[] = { h_range, s_range };
     int hs_channels[] = { 0, 1 };
     calcHist(&hsv, 1, hs_channels, Mat(), hs_hist, 2, hist_bins, hs_ranges, true, false);
+    std::cout<<hs_hist.size()<<std::endl;
+    //==
     double maxVal = 0;
     minMaxLoc(hs_hist, 0, &maxVal, 0, 0);
     int scale = 10;
@@ -566,44 +575,55 @@ void tasker_OpenCV::histogram_2d_demo(Mat &image) {
         {
             float binVal = hs_hist.at<float>(h, s);
             int intensity = cvRound(binVal * 255 / maxVal);
-            rectangle(hist2d_image, cv::Point(h*scale, s*scale),
-                cv::Point((h + 1)*scale - 1, (s + 1)*scale - 1),
-                cv::Scalar::all(intensity),
-                -1);
+            rectangle(hist2d_image,
+                        cv::Point(h*scale, s*scale),
+                        cv::Point((h + 1)*scale - 1, (s + 1)*scale - 1),
+                        cv::Scalar::all(intensity), -1);
         }
     }
     applyColorMap(hist2d_image, hist2d_image, cv::COLORMAP_JET);
     imshow("H-S Histogram", hist2d_image);
-    imwrite("D:/hist_2d.png", hist2d_image);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::histogram_eq_demo(Mat &image) {
     Mat gray;
     cvtColor(image, gray, cv::COLOR_BGR2GRAY);
-    imshow("灰度图像", gray);
+    cv::imshow("灰度图像", gray);
     Mat dst;
-    equalizeHist(gray, dst);
-    imshow("直方图均衡化演示", dst);
+    cv::equalizeHist(gray, dst);
+    cv::imshow("直方图均衡化演示", dst);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::blur_demo(Mat &image) {
+    /* blur image by the following kernal:
+     * 1 1 1
+     * 1 1 1
+     * 1 1 1    */
     Mat dst;
-    blur(image, dst, cv::Size(15, 15), cv::Point(-1, -1));
-    imshow("图像模糊", dst);
+    cv::blur(image, dst, cv::Size(15, 15), cv::Point(-1, -1));
+    cv::imshow("图像模糊", dst);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::gaussian_blur_demo(Mat &image) {
+    /* blur image by the following kernal:
+     * 1 2 1
+     * 2 4 2
+     * 1 2 1    */
     Mat dst;
-    GaussianBlur(image, dst, cv::Size(0, 0), 15);
-    imshow("高斯模糊", dst);
+    cv::GaussianBlur(image, dst, cv::Size(0, 0), 15);
+    cv::imshow("高斯模糊", dst);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::bifilter_demo(Mat &image) {
     Mat dst;
-    bilateralFilter(image, dst, 0, 100, 10);
+    cv::bilateralFilter(image, dst, 0, 100, 10);
     imshow("双边模糊", dst);
+    cv::waitKey(0);
 }
-
 
 /*
 void tasker_OpenCV::face_detection_demo() {
