@@ -9,16 +9,46 @@
 #include <fstream>
 #include <memory>
 
+
+
+class tasker_eigen{
+public:
+    void task1();
+    void task2();
+    void task3();
+    void task4();
+    void task5();
+    void task6();
+    void task7();
+    void task8();
+    void task9();
+    void task10();
+    void task11();
+};
+
+class tasker_libtorch{
+public:
+    void task1();
+    void task2();
+    void task3();
+    void task4();
+    void task5();
+    void task6();
+    void task7();
+    void task8();
+    void task9();
+    void task10();
+    void task11();
+};
+
+
 #include<opencv2/opencv.hpp>
-
-
-
 using cv::Mat;
 class tasker_OpenCV{
     public:
-    tasker_OpenCV(){
-        std::cout<<"tasker on opencv"<<std::endl;
-    }
+        tasker_OpenCV(){
+            std::cout<<"tasker on opencv"<<std::endl;
+        }
         void colorSpace_Demo(Mat &image);
         void mat_creation_demo();
         void pixel_visit_demo(Mat &image);

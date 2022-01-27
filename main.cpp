@@ -1,6 +1,7 @@
 #include"tasker.h"
 #include<thread>
 
+
 void tasker3_show_src(cv::Mat image){
     std::cout<<"second thread is running, thread id = "<< std::this_thread::get_id()<<std::endl;
     cv::imshow("input image", image);
@@ -9,13 +10,34 @@ void tasker3_show_src(cv::Mat image){
 }
 
 /*====================================================================*/
+
+#define compile_level_libtorch
+//#define compile_level_eigen
+//#define compile_level_opencv
+//#define compile_level_stl
+//#define compile_level_cpp
+
 int main()
 {
     std::cout << "Progress starts..." << std::endl;
     std::cout<<"main thread id = "<< std::this_thread::get_id()<<std::endl;
     std::cout<<"========================================"<<std::endl;
 
-    //================================================================
+#ifdef compile_level_libtorch
+    tasker_libtorch Tasker5;
+    Tasker5.task1();
+#endif
+
+
+//================================================================
+#ifdef compile_level_eigen
+    tasker_eigen Tasker4;
+    Tasker4.task1();
+#endif
+
+
+//================================================================
+#ifdef compile_level_opencv
     cv::Mat src = cv::imread("example.jpg"); //BGR
     if(src.empty()){
         std::cout<<"could not open image"<<std::endl; return -1;
@@ -50,23 +72,26 @@ int main()
     //Tasker3.gaussian_blur_demo(src);
     Tasker3.bifilter_demo(src);
     //Tasker3.face_detection_demo();
+#endif
 
 
-
-
-    //================================================================
-    //tasker_STL Tasker2;
-    //Tasker2.task1();
+//================================================================
+#ifdef compile_level_stl
+    tasker_STL Tasker2;
+    Tasker2.task1();
     //Tasker2.task2();
     //Tasker2.task3();
     //Tasker2.task4();
     //Tasker2.task5();
     //Tasker2.task6();
 
+#endif
 
-    //================================================================
-    //tasker_cpp Tasker1;
-    //Tasker1.task1();
+
+//================================================================
+#ifdef compile_level_cpp
+    tasker_cpp Tasker1;
+    Tasker1.task1();
     //Tasker1.task2(9,5.6,'a');
     //Tasker1.task3();
     //Tasker1.task4();
@@ -77,6 +102,6 @@ int main()
     //Tasker1.task9();
     //Tasker1.task10();
     //Tasker1.task11();
-
+#endif
     return 0;
 }

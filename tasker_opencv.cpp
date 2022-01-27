@@ -1,10 +1,10 @@
 #include "tasker.h"
-
+#include<opencv2/opencv.hpp>
 
 
 void tasker_OpenCV::colorSpace_Demo(Mat &image) {
     Mat gray, hsv;
-    cvtColor(image, hsv, cv::COLOR_BGR2HSV);
+    cvtColor(image, hsv, cv::COLOR_BGR2HSV);;
     // H 0 ~ 180, S, V
     cvtColor(image, gray, cv::COLOR_BGR2GRAY);
     imshow("HSV", hsv);

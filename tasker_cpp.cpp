@@ -32,7 +32,7 @@ template<typename T1, typename T2> void task10_swap(T1 &a, T2 &b){
     return;
 }
 void tasker_cpp::task10(){
-    float a=1.1, b=2.9;
+    float a=1.1;
     int i1=9, i2=7;
     task10_swap(&i1, &i2);
     std::cout<<i1<<","<<i2<<std::endl;
