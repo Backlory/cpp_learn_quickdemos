@@ -11,6 +11,7 @@ void tasker_OpenCV::colorSpace_Demo(Mat &image) {
     imshow("灰度", gray);
     // imwrite("D:/hsv.png", hsv);
     // imwrite("D:/gray.png", gray);
+    cvtColor(image, image, cv::COLOR_BGR2GRAY);
     cv::waitKey();
 }
 
@@ -20,10 +21,10 @@ void tasker_OpenCV::mat_creation_demo() {
     // image.copyTo(m2);
 
     // 创建空白图像
-    Mat m3 = Mat::zeros(cv::Size(1280, 720), CV_8UC3);
-    m3 = cv::Scalar(0, 0, 255);
+    Mat m3 = Mat::zeros(cv::Size(854, 480), CV_8UC3);
+    m3 = cv::Scalar(0, 0, 255); //=运算符重载。并非初始化
     std::cout << "width: " << m3.cols << " height: " << m3.rows << " channels: "<<m3.channels()<< std::endl;
-    // std::cout << m3 << std::endl;
+    //std::cout << m3 << std::endl;
 
     Mat m4;
     m3.copyTo(m4);
@@ -62,19 +63,20 @@ void tasker_OpenCV::pixel_visit_demo(Mat &image) {
                 *current_row++ = 255 - pv;
             }
             if (dims == 3) { // 彩色图像
-                *current_row++ = 255 - *current_row;
-                *current_row++ = 255 - *current_row;
-                *current_row++ = 255 - *current_row;
+                *current_row = 255 - *current_row; current_row++;
+                *current_row = 255 - *current_row; current_row++;
+                *current_row = 255 - *current_row; current_row++;
             }
         }
     }
     imshow("像素读写演示", image);
+    cv::waitKey();
 }
 
 void tasker_OpenCV::operators_demo(Mat &image) {
     Mat dst = Mat::zeros(image.size(), image.type());
     Mat m = Mat::zeros(image.size(), image.type());
-    m = cv::Scalar(5, 5, 5);
+    m = cv::Scalar(5, 50, 5);
 
     // 加法
     /*
@@ -91,13 +93,18 @@ void tasker_OpenCV::operators_demo(Mat &image) {
         }
     }
     */
-    divide(image, m, dst);
+    //divide(image, m, dst);
+    cv::add(image, m, dst);
+    std::cout<<image.at<cv::Vec3b>(20, 20)<<std::endl;
+    std::cout<<m.at<cv::Vec3b>(20, 20)<<std::endl;
+    std::cout<<dst.at<cv::Vec3b>(20, 20)<<std::endl;
 
     imshow("加法操作", dst);
+    cv::waitKey();
 }
 
 static void on_lightness(int b, void* userdata) {
-    Mat image = *((Mat*)userdata);
+    Mat image = *((Mat*)userdata);                      //type casting
     Mat dst = Mat::zeros(image.size(), image.type());
     Mat m = Mat::zeros(image.size(), image.type());
     addWeighted(image, 1.0, m, 0, b, dst);
@@ -118,21 +125,34 @@ void tasker_OpenCV::tracking_bar_demo(Mat &image) {
     int lightness = 50;
     int max_value = 100;
     int contrast_value = 100;
-    cv::createTrackbar("Value Bar:", "亮度与对比度调整", &lightness, max_value, on_lightness, (void*) (&image));
-    cv::createTrackbar("Contrast Bar:", "亮度与对比度调整", &contrast_value, 200, on_contrast, (void*)(&image));
+    cv::createTrackbar("Value Bar:",
+                       "亮度与对比度调整",
+                       nullptr,
+                       max_value,
+                       on_lightness,
+                       (void*) (&image));
+    cv::setTrackbarPos("Value Bar:", "亮度与对比度调整", lightness);
+    cv::createTrackbar("Contrast Bar:",
+                       "亮度与对比度调整",
+                       nullptr,
+                       200, on_contrast,
+                       (void*)(&image));
+    cv::setTrackbarPos("Contrast Bar:", "亮度与对比度调整", contrast_value);
     on_lightness(50, &image);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::key_demo(Mat &image) {
     Mat dst = Mat::zeros(image.size(), image.type());
     while (true) {
         int c = cv::waitKey(100);
-        if (c == 27) { // 退出
+        if (c == 27) { // 退出esc
             break;
         }
         if (c == 49) { // Key #1
             std::cout << "you enter key # 1 "<< std::endl;
             cvtColor(image, dst, cv::COLOR_BGR2GRAY);
+            cvtColor(dst, dst, cv::COLOR_GRAY2BGR);
         }
         if (c == 50) { // Key #2
             std::cout << "you enter key # 2 " << std::endl;
@@ -181,9 +201,13 @@ void tasker_OpenCV::color_style_demo(Mat &image) {
         index++;
         imshow("颜色风格", dst);
     }
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
-void tasker_OpenCV::bitwise_demo(Mat &image) {
+void tasker_OpenCV::bitwise_demo() {
+    auto temp = cv::Rect(100, 100, 80, 80);
+    std::cout<< temp << std::endl;
     Mat m1 = Mat::zeros(cv::Size(256, 256), CV_8UC3);
     Mat m2 = Mat::zeros(cv::Size(256, 256), CV_8UC3);
     rectangle(m1, cv::Rect(100, 100, 80, 80), cv::Scalar(255, 255, 0), -1, cv::LINE_8, 0);
@@ -193,6 +217,8 @@ void tasker_OpenCV::bitwise_demo(Mat &image) {
     Mat dst;
     bitwise_xor(m1, m2, dst);
     imshow("像素位操作", dst);
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void tasker_OpenCV::channels_demo(Mat &image) {
@@ -204,20 +230,33 @@ void tasker_OpenCV::channels_demo(Mat &image) {
 
     Mat dst;
     mv[0] = 0;
-    // mv[1] = 0;
     merge(mv, dst);
-    imshow("红色", dst);
+    imshow("红色2", dst);
 
-    int from_to[] = { 0, 2, 1,1, 2, 0 };
+    int from_to[] = { 0, 2, 1, 1, 2, 0 };
     mixChannels(&image, 1, &dst, 1, from_to, 3);
     imshow("通道混合", dst);
+
+    Mat bgra(500, 500, CV_8UC4, cv::Scalar(255, 255, 0, 255));
+    Mat bgr(bgra.size(), bgra.type());
+    Mat a(bgra.size(), bgra.type());
+    Mat out[]={bgr, a};
+    int from_to_[] = {0,2, 1,1, 2,0, 3,3};
+    cv::mixChannels(&bgra, 1, out, 2, from_to_, 4);
+    cv::imshow("bgra", bgra);
+    cv::imshow("bgr", bgr);
+    cv::imshow("a", a);
+
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void tasker_OpenCV::inrange_demo(Mat &image) {
     Mat hsv;
     cvtColor(image, hsv, cv::COLOR_BGR2HSV);
     Mat mask;
-    inRange(hsv, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), mask);
+    cv::inRange(hsv, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), mask);
+    std::cout<<mask.type()<<std::endl;
 
     Mat redback = Mat::zeros(image.size(), image.type());
     redback = cv::Scalar(40, 40, 200);
@@ -225,6 +264,8 @@ void tasker_OpenCV::inrange_demo(Mat &image) {
     imshow("mask", mask);
     image.copyTo(redback, mask);
     imshow("roi区域提取", redback);
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void tasker_OpenCV::pixel_statistic_demo(Mat &image) {
@@ -232,9 +273,11 @@ void tasker_OpenCV::pixel_statistic_demo(Mat &image) {
     cv::Point minLoc, maxLoc;
     std::vector<Mat> mv;
     split(image, mv);
-    for (int i = 0; i < mv.size(); i++) {
+    for (int i = 0; i < static_cast<int>(mv.size()); i++) {
         minMaxLoc(mv[i], &minv, &maxv, &minLoc, &maxLoc, Mat());
-        std::cout <<"No. channels:"<< i << " min value:" << minv << " max value:" << maxv << std::endl;
+        std::cout <<"channel["<< i <<
+                    "]\t min value:" << minv << " at "<< minLoc <<
+                    " max value:" << maxv << " at "<< maxLoc << std::endl;
     }
     Mat mean, stddev;
     Mat redback = Mat::zeros(image.size(), image.type());
@@ -243,6 +286,8 @@ void tasker_OpenCV::pixel_statistic_demo(Mat &image) {
     imshow("redback", redback);
     std::cout << "means:" << mean << std::endl;
     std::cout<< " stddev:" << stddev << std::endl;
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void tasker_OpenCV::drawing_demo(Mat &image) {
@@ -258,11 +303,13 @@ void tasker_OpenCV::drawing_demo(Mat &image) {
     cv::RotatedRect rrt;
     rrt.center = cv::Point(200, 200);
     rrt.size = cv::Size(100, 200);
-    rrt.angle = 90.0;
-    ellipse(bg, rrt, cv::Scalar(0, 255, 255), 2, 8);
+    rrt.angle = 72.0;
+    //std::cout<<rrt<<std::endl;
+    cv::ellipse(bg, rrt, cv::Scalar(0, 255, 255), 2, 8);
     Mat dst;
     addWeighted(image, 0.7, bg, 0.3, 0, dst);
     imshow("绘制演示", bg);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::random_drawing() {
@@ -271,7 +318,7 @@ void tasker_OpenCV::random_drawing() {
     int h = canvas.rows;
     cv::RNG rng(12345);
     while (true) {
-        int c = cv::waitKey(10);
+        int c = cv::waitKey(1000);
         if (c == 27) { // 退出
             break;
         }
@@ -290,8 +337,6 @@ void tasker_OpenCV::random_drawing() {
 
 void tasker_OpenCV::polyline_drawing_demo() {
     Mat canvas = Mat::zeros(cv::Size(512, 512), CV_8UC3);
-    int w = canvas.cols;
-    int h = canvas.rows;
     cv::Point p1(100, 100);
     cv::Point p2(300, 150);
     cv::Point p3(300, 350);
@@ -309,12 +354,14 @@ void tasker_OpenCV::polyline_drawing_demo() {
     contours.push_back(pts);
     drawContours(canvas, contours, 0, cv::Scalar(0, 0, 255), -1, 8);
     imshow("绘制多边形", canvas);
+    cv::waitKey(0);
 }
 
 cv::Point sp(-1, -1);
 cv::Point ep(-1, -1);
 Mat temp;
 static void on_draw(int event, int x, int y, int flags, void *userdata) {
+    std::cout<<flags<<std::endl;
     Mat image = *((Mat*)userdata);
     if (event == cv::EVENT_LBUTTONDOWN) {
         sp.x = x;
@@ -358,17 +405,27 @@ void tasker_OpenCV::mouse_drawing_demo(Mat &image) {
     cv::setMouseCallback("鼠标绘制", on_draw, (void*)(&image));
     imshow("鼠标绘制", image);
     temp = image.clone();
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::norm_demo(Mat &image) {
     Mat dst;
+    double minval=0, maxval=0;
+    //
+    cv::minMaxLoc(image, &minval, &maxval,0,0,cv::noArray());
+    std::cout << "==" << minval << "-" << maxval << std::endl;
     std::cout << image.type() << std::endl;
+    //
     image.convertTo(image, CV_32F);
+    cv::minMaxLoc(image, &minval, &maxval,0,0,cv::noArray());
+    std::cout << "==" << minval << "-" << maxval << std::endl;
     std::cout << image.type() << std::endl;
-    normalize(image, dst, 1.0, 0, cv::NORM_MINMAX);
+    //
+    cv::normalize(image, dst, 1.0, 0, cv::NORM_MINMAX);
+    cv::minMaxLoc(dst, &minval, &maxval,0,0,cv::noArray());
+    std::cout << dst(cv::Rect(20,20, 2, 2)) << std::endl;
+    std::cout << "==" << minval << "-" << maxval << std::endl;
     std::cout << dst.type() << std::endl;
-    imshow("图像数据归一化", dst);
-    // CV_8UC3, CV_32FC3
 }
 
 void tasker_OpenCV::resize_demo(Mat &image) {
@@ -379,6 +436,7 @@ void tasker_OpenCV::resize_demo(Mat &image) {
     imshow("zoomin", zoomin);
     resize(image, zoomout, cv::Size(w*1.5, h*1.5), 0, 0, cv::INTER_LINEAR);
     imshow("zoomout", zoomout);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::flip_demo(Mat &image) {
@@ -387,6 +445,7 @@ void tasker_OpenCV::flip_demo(Mat &image) {
     // flip(image, dst, 1); // 左右翻转
     flip(image, dst, -1); // 180°旋转
     imshow("图像翻转", dst);
+    cv::waitKey(0);
 }
 
 void tasker_OpenCV::rotate_demo(Mat &image) {
@@ -394,17 +453,23 @@ void tasker_OpenCV::rotate_demo(Mat &image) {
     int w = image.cols;
     int h = image.rows;
     M = getRotationMatrix2D(cv::Point2f(w / 2, h / 2), 45, 1.0);
-    double cos = abs(M.at<double>(0, 0));
-    double sin = abs(M.at<double>(0, 1));
+    std::cout<<M<<std::endl;
+    //==
+    double cos = cv::abs(M.at<double>(0, 0));
+    double sin = cv::abs(M.at<double>(0, 1));
     int nw = cos*w + sin*h;
     int nh = sin*w + cos*h;
-    M.at<double>(0, 2) += (nw / 2 - w / 2);
-    M.at<double>(1,2) += (nh / 2 - h / 2);
     warpAffine(image, dst, M, cv::Size(nw, nh), cv::INTER_LINEAR, 0, cv::Scalar(255, 255, 0));
-    imshow("旋转演示", dst);
+    imshow("旋转演示1", dst);
+    //==
+    M.at<double>(0, 2) += (nw - w) / 2;
+    M.at<double>(1, 2) += (nh - h) / 2;
+    warpAffine(image, dst, M, cv::Size(nw, nh), cv::INTER_LINEAR, 0, cv::Scalar(255, 255, 0));
+    imshow("旋转演示2", dst);
+    cv::waitKey(0);
 }
 
-/*
+
 void tasker_OpenCV::video_demo() {
     cv::VideoCapture capture("example.mp4");
     int frame_width = capture.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -415,20 +480,23 @@ void tasker_OpenCV::video_demo() {
     std::cout << "frame height:" << frame_height << std::endl;
     std::cout << "FPS:" << fps << std::endl;
     std::cout << "Number of Frames:" << count << std::endl;
-    cv::VideoWriter writer("D:/test.mp4", capture.get(cv::CAP_PROP_FOURCC), fps, cv::Size(frame_width, frame_height), true);
+    cv::VideoWriter writer("test.mp4", capture.get(cv::CAP_PROP_FOURCC), fps,
+                                        cv::Size(frame_width, frame_height), true);
     Mat frame;
+    int i=0;
     while (true) {
+        std::cout<<i++<<std::endl;
         capture.read(frame);
         flip(frame, frame, 1);
         if (frame.empty()) {
+            std::cout<<"end!"<<std::endl;
             break;
         }
+        cvtColor(frame, frame, cv::COLOR_BGR2HSV);
         imshow("frame", frame);
-        colorSpace_Demo(frame);
         writer.write(frame);
-        // TODO: do something....
-        int c = cv::waitKey(1);
-        if (c == 27) { // 退出
+        //
+        if (cv::waitKey(1) == 27) { // 退出
             break;
         }
     }
@@ -437,7 +505,7 @@ void tasker_OpenCV::video_demo() {
     capture.release();
     writer.release();
 }
-*/
+
 void tasker_OpenCV::histogram_demo(Mat &image) {
     // 三通道分离
     std::vector<Mat> bgr_plane;
@@ -572,3 +640,4 @@ void tasker_OpenCV::face_detection_demo() {
     }
 }
 */
+

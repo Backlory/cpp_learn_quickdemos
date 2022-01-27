@@ -24,13 +24,13 @@ int main()
     thread_src.join();
     tasker_OpenCV Tasker3;
     //Tasker3.colorSpace_Demo(src);
-    Tasker3.mat_creation_demo();
+    //Tasker3.mat_creation_demo();
     //Tasker3.pixel_visit_demo(src);
     //Tasker3.operators_demo(src);
     //Tasker3.tracking_bar_demo(src);
     //Tasker3.key_demo(src);
     //Tasker3.color_style_demo(src);
-    //Tasker3.bitwise_demo(src);
+    //Tasker3.bitwise_demo();
     //Tasker3.channels_demo(src);
     //Tasker3.inrange_demo(src);
     //Tasker3.pixel_statistic_demo(src);
@@ -42,7 +42,7 @@ int main()
     //Tasker3.resize_demo(src);
     //Tasker3.flip_demo(src);
     //Tasker3.rotate_demo(src);
-    //Tasker3.video_demo(src);
+    Tasker3.video_demo();
     //Tasker3.histogram_demo(src);
     //Tasker3.histogram_2d_demo(src);
     //Tasker3.histogram_eq_demo(src);
